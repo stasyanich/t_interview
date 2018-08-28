@@ -3,6 +3,8 @@ out/
 *.iml
 *.bat
 *.db
+1.xml
+2.xml
 
 ### Java template
 # Compiled class file
