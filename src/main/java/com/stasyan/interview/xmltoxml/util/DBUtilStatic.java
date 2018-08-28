@@ -1,6 +1,9 @@
 package com.stasyan.interview.xmltoxml.util;
 
+import com.stasyan.interview.xmltoxml.model.XmlEntry;
+
 import java.sql.*;
+import java.util.ArrayList;
 
 public class DBUtilStatic {
     private static final String JDBC_DRIVER = "org.sqlite.JDBC";
@@ -58,6 +61,29 @@ public class DBUtilStatic {
         }catch (SQLException e){
             throw new XmlToXmlException(e);
         }
+    }
+
+    public static ArrayList<XmlEntry> readRecordsFromDB() throws XmlToXmlException{
+        ArrayList<XmlEntry> result ;
+        String sqlQuery = "SELECT * FROM TEST";
+        try(Statement statement = connection.createStatement()) {
+            ResultSet rs = statement.executeQuery(sqlQuery);
+            result = parseResultSetXmlBeans(rs);
+        }catch (SQLException e){
+            throw new XmlToXmlException(e);
+        }
+
+        return result;
+    }
+
+    private static ArrayList<XmlEntry> parseResultSetXmlBeans(ResultSet rs) throws SQLException {
+        ArrayList<XmlEntry> result = new ArrayList<>();
+        while (rs.next()){
+            XmlEntry xmlEntry = new XmlEntry();
+            xmlEntry.setField(rs.getInt("FIELD"));
+            result.add(xmlEntry);
+        }
+        return result;
     }
 
     private static void clearDB() throws XmlToXmlException{
