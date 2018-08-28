@@ -1,7 +1,5 @@
 package com.stasyan.interview.xmltoxml.util;
 
-import com.sun.istack.internal.NotNull;
-
 import java.sql.*;
 
 public class DBUtilStatic {
@@ -13,23 +11,11 @@ public class DBUtilStatic {
         try {
             Class.forName(JDBC_DRIVER);
             connection = getConnection();
-            connection.setAutoCommit(false);
-
             clearDB();
         }catch (ClassNotFoundException e){
-            System.err.println("Enable to load jdbc driver");
-        }catch (XmlToXmlException e){
+            System.err.println("Cannot to load jdbc driver");
+        }catch (XmlToXmlException e) {
             System.err.println(e.getMessage());
-        }catch (SQLException e){
-            System.err.println(e.getMessage());
-        }
-    }
-
-    public DBUtilStatic() {
-        try {
-            addRecord(1_000_000);
-        } catch (XmlToXmlException e) {
-            e.printStackTrace();
         }
     }
 
@@ -40,7 +26,6 @@ public class DBUtilStatic {
             throw new XmlToXmlException(e);
         }
     }
-
 
     private static void querySqlDB(String query) throws XmlToXmlException {
 
@@ -55,17 +40,21 @@ public class DBUtilStatic {
         }
     }
 
-    private static void addRecord(int amount) throws XmlToXmlException{
+    public static void addRecord(int amount) throws XmlToXmlException{
+
         String sqlQuery = "INSERT INTO TEST (FIELD) VALUES (?)";
         try(PreparedStatement statement = connection.prepareStatement(sqlQuery)){
+            connection.setAutoCommit(false);
 
-            for (int i=1;i<=amount;i++){
+            for (int i=0; i<amount; i++){
                 statement.setInt(1, i);
                 statement.addBatch();
             }
 
             statement.executeBatch();
             connection.commit();
+            connection.setAutoCommit(true);
+
         }catch (SQLException e){
             throw new XmlToXmlException(e);
         }
