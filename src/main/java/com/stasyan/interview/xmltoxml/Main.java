@@ -36,9 +36,9 @@ public class Main {
         int arithmeticSum = getSumXmlEntryFromArrayList(xmlEntries);
 
         long timeSpend = System.currentTimeMillis() - startTime;
-        log.info("программа выполнялась: " + timeSpend / 1000L + " секунд");
-        log.info(firstFileName + ".xml " + secondFileName + ".xml" + " записалось: " + bigN + " раз");
-        log.info("арифметическая сумма: " + arithmeticSum);
+        log.info("The program is worked: " + timeSpend / 1000L + " seconds");
+        log.info(firstFileName + ".xml " + secondFileName + ".xml" + " records: " + bigN + " times");
+        log.info("arithmetic Sum: " + arithmeticSum);
 
     }
 
@@ -95,10 +95,10 @@ public class Main {
             } else if (args.length < 1) {
                 //NOP
             } else {
-                log.error("Ошибка в параметрах:" + args.toString());
+                log.error("Error parameters:" + args.toString());
             }
         } catch (NumberFormatException n) {
-            log.error("Ошибка ввода числа. Количество записей в бд указывается первым и единственнм значением или третим");
+            log.error(n.getMessage());
         }
 
     }

@@ -36,10 +36,10 @@ public class DBUtilStatic {
             statement.execute(query);
 
         }catch (SQLException e){
-            throw new XmlToXmlException("Невозможно получить statement" + e);
+            throw new XmlToXmlException("Impossible to get astatement" + e);
 
         }catch (NullPointerException e){
-            throw new XmlToXmlException("Невозможно получить statement: NPE" + e);
+            throw new XmlToXmlException("Impossible to get a statement: NPE" + e);
         }
     }
 
