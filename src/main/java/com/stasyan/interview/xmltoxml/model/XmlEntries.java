@@ -6,13 +6,13 @@ import java.util.ArrayList;
 
 @XmlRootElement(name = "entries")
 public class XmlEntries {
-    ArrayList<XmlEntry> xmlEntries;
+    private  ArrayList<XmlEntry> xmlEntries;
 
-    @XmlElement(name = "entry")
     public ArrayList<XmlEntry> getXmlEntries() {
         return xmlEntries;
     }
 
+    @XmlElement(name = "entry")
     public void setXmlEntries(ArrayList<XmlEntry> xmlEntries) {
         this.xmlEntries = xmlEntries;
     }

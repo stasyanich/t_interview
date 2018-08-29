@@ -13,11 +13,11 @@ public class XmlEntry {
         this.field = field;
     }
 
-    @XmlElement(name = "field")
     public int getField() {
         return field;
     }
 
+    @XmlElement
     public void setField(int field) {
         this.field = field;
     }
