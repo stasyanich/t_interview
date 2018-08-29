@@ -15,7 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class Main {
-
+//добавить ключ debug
     private static String firstFileName = "1";
     private static String secondFileName = "2";
     private static String postfix = ".xml";
