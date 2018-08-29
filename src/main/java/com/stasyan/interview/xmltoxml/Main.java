@@ -6,6 +6,8 @@ import com.stasyan.interview.xmltoxml.util.DBUtilStatic;
 import com.stasyan.interview.xmltoxml.util.JaxbParser;
 import com.stasyan.interview.xmltoxml.util.XmlToXmlException;
 import com.stasyan.interview.xmltoxml.util.XsltTransformer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
@@ -17,9 +19,9 @@ public class Main {
     private static String firstFileName = "1";
     private static String secondFileName = "2";
     private static String postfix = ".xml";
-    private static final String xlsSource = "template.xls";
+    private static final String XLS_SOURCE = "template.xls";
     private static int bigN = 1_000_000;
-
+    private static final Logger log = LogManager.getLogger();
     // данные для подключения к бд: адрес, логин, пароль?
     public static void main(String[] args) throws Exception {
         long startTime = System.currentTimeMillis();
@@ -27,16 +29,16 @@ public class Main {
         incomingParameters(args);
 
         doIt(firstFileName, secondFileName, bigN);
-        transformXlsToXSLT(firstFileName + postfix, secondFileName + postfix, xlsSource);
+        transformXlsToXSLT(firstFileName + postfix, secondFileName + postfix, XLS_SOURCE);
 
         ArrayList<XmlEntry> xmlEntries = readXmlEntriesFromXml(secondFileName + postfix);
 
         int arithmeticSum = getSumXmlEntryFromArrayList(xmlEntries);
 
         long timeSpend = System.currentTimeMillis() - startTime;
-        System.err.println("программа выполнялась: " + timeSpend / 1000L + " секунд");
-        System.err.println(firstFileName + ".xml " + secondFileName + ".xml" + " записалось: " + bigN + " раз");
-        System.err.println("арифметическая сумма: " + arithmeticSum);
+        log.info("программа выполнялась: " + timeSpend / 1000L + " секунд");
+        log.info(firstFileName + ".xml " + secondFileName + ".xml" + " записалось: " + bigN + " раз");
+        log.info("арифметическая сумма: " + arithmeticSum);
 
     }
 
@@ -47,8 +49,10 @@ public class Main {
             saveXmlEntryToXml(entries, firstFileName + postfix);
 
         } catch (XmlToXmlException e) {
+            log.error(e.getMessage());
             e.printStackTrace();
         } catch (JAXBException j) {
+            log.error(j.getMessage());
             j.printStackTrace();
         }
     }
@@ -71,7 +75,7 @@ public class Main {
     private static ArrayList<XmlEntry> readXmlEntriesFromXml(String filename) throws Exception {
         ArrayList<XmlEntry> result;
         JaxbParser jaxbParser = new JaxbParser();
-        XmlEntries xmlEntries = jaxbParser.getTansformedObject(new File(filename), XmlEntries.class);
+        XmlEntries xmlEntries = jaxbParser.getTansformedXmlEntries(new File(filename));
 
         result = xmlEntries.getXmlEntries();
         return result;
@@ -91,10 +95,10 @@ public class Main {
             } else if (args.length < 1) {
                 //NOP
             } else {
-                System.err.println("Ошибка в параметрах:" + args.toString());
+                log.error("Ошибка в параметрах:" + args.toString());
             }
         } catch (NumberFormatException n) {
-            System.err.println("Ошибка ввода числа. Количество записей в бд указывается первым и единственнм значением или третим");
+            log.error("Ошибка ввода числа. Количество записей в бд указывается первым и единственнм значением или третим");
         }
 
     }

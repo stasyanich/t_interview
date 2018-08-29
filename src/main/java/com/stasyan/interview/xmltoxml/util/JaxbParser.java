@@ -13,9 +13,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.util.ArrayList;
 
-public class JaxbParser implements Parser {
-    
-    @Override
+public class JaxbParser  {
+
     public Object getObject(File file, Class clazz) throws JAXBException {
 
         JAXBContext context = JAXBContext.newInstance(clazz);
@@ -25,18 +24,20 @@ public class JaxbParser implements Parser {
         return object;
     }
 
-    @Override
+
     public void saveObject(File file, Object object) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(object.getClass());
         Marshaller marshaller = context.createMarshaller();
         marshaller.marshal(object, file);
     }
 
-    public XmlEntries getTansformedObject(File file, Class clazz) throws Exception{
+    public XmlEntries getTansformedXmlEntries(File file) throws Exception{
         XmlEntries xmlEntries = new XmlEntries();
         ArrayList<XmlEntry> xmlEntryArrayList = new ArrayList<>();
+
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
+
         if (file.isFile() && file.canRead()) {
             Document document = builder.parse(file);
             Element root = document.getDocumentElement();
@@ -52,7 +53,6 @@ public class JaxbParser implements Parser {
                 }
             }
             xmlEntries.setXmlEntries(xmlEntryArrayList);
-
         }
         return xmlEntries;
     }
