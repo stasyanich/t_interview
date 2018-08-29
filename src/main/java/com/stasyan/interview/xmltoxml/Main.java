@@ -5,8 +5,10 @@ import com.stasyan.interview.xmltoxml.model.XmlEntry;
 import com.stasyan.interview.xmltoxml.util.DBUtilStatic;
 import com.stasyan.interview.xmltoxml.util.JaxbParser;
 import com.stasyan.interview.xmltoxml.util.XmlToXmlException;
+import com.stasyan.interview.xmltoxml.util.XsltParser;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -15,15 +17,19 @@ public class Main {
     private static String firstFileName = "1";
     private static String secondFileName = "2";
     private static String postfix = ".xml";
+    private static String xlsSource = "template.xls";
     private static int bigN = 1_00;
 
     // данные для подключения к бд: адрес, логин, пароль?
-    public static void main(String[] args) {
+    public static void main(String[] args) throws TransformerException {
         long startTime = System.currentTimeMillis();
 
         incomingParameters(args);
 
         doIt(firstFileName, secondFileName, bigN);
+
+        XsltParser xsltParser = new XsltParser();
+        xsltParser.transformXmlToXlst(firstFileName+postfix,secondFileName+postfix,xlsSource);
 
         long timeSpend = System.currentTimeMillis() - startTime;
         System.err.println("программа выполнялась: " + timeSpend / 1000L + " секунд");
@@ -56,7 +62,6 @@ public class Main {
 
     private static XmlEntries readObjectsFromXml(String filename) throws JAXBException{
         JaxbParser jaxbParser = new JaxbParser();
-        ArrayList<XmlEntry> result;
         XmlEntries xmlEntries =(XmlEntries) jaxbParser.getObject(new File(filename), XmlEntries.class);
         return xmlEntries;
     }
