@@ -24,11 +24,13 @@ public class Main {
     private static final Logger log = LogManager.getLogger();
     // данные для подключения к бд: адрес, логин, пароль?
     public static void main(String[] args) throws Exception {
+
         long startTime = System.currentTimeMillis();
 
         incomingParameters(args);
 
-        doIt(firstFileName, secondFileName, bigN);
+        ArrayList<XmlEntry> xmlEntryArrayList= writeAndReadFromBd(bigN);
+        saveXmlEntryToXml(xmlEntryArrayList,firstFileName+postfix);
         transformXlsToXSLT(firstFileName + postfix, secondFileName + postfix, XLS_SOURCE);
 
         ArrayList<XmlEntry> xmlEntries = readXmlEntriesFromXml(secondFileName + postfix);
@@ -42,19 +44,12 @@ public class Main {
 
     }
 
-    private static void doIt(String firstFileName, String secondFileName, int bigN) {
-        try {
-            DBUtilStatic.addRecord(bigN);
-            ArrayList<XmlEntry> entries = DBUtilStatic.readRecordsFromDB();
-            saveXmlEntryToXml(entries, firstFileName + postfix);
 
-        } catch (XmlToXmlException e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-        } catch (JAXBException j) {
-            log.error(j.getMessage());
-            j.printStackTrace();
-        }
+    private static ArrayList<XmlEntry> writeAndReadFromBd(int bigN) throws XmlToXmlException{
+        ArrayList<XmlEntry> result;
+        DBUtilStatic.addRecord(bigN);
+        result=DBUtilStatic.readRecordsFromDB();
+        return result;
     }
 
     private static void saveXmlEntryToXml(ArrayList<XmlEntry> arrayList, String fileName) throws JAXBException {
@@ -98,7 +93,8 @@ public class Main {
                 log.error("Error parameters:" + args.toString());
             }
         } catch (NumberFormatException n) {
-            log.error(n.getMessage());
+            log.error(n);
+            System.exit(0);
         }
 
     }
