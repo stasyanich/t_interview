@@ -13,6 +13,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main {
 //добавить ключ debug
@@ -22,6 +23,7 @@ public class Main {
     private static final String XLS_SOURCE = "template.xls";
     private static int bigN = 1_000_000;
     private static final Logger log = LogManager.getLogger();
+
     // данные для подключения к бд: адрес, логин, пароль?
     public static void main(String[] args) throws Exception {
 
@@ -31,7 +33,7 @@ public class Main {
 
         ArrayList<XmlEntry> xmlEntryArrayList= writeAndReadFromBd(bigN);
         saveXmlEntryToXml(xmlEntryArrayList,firstFileName+postfix);
-        transformXlsToXSLT(firstFileName + postfix, secondFileName + postfix, XLS_SOURCE);
+        transformXlsByXSLT(firstFileName + postfix, secondFileName + postfix, XLS_SOURCE);
 
         ArrayList<XmlEntry> xmlEntries = readXmlEntriesFromXml(secondFileName + postfix);
 
@@ -54,17 +56,14 @@ public class Main {
 
     private static void saveXmlEntryToXml(ArrayList<XmlEntry> arrayList, String fileName) throws JAXBException {
         XmlEntries xmlEntries = new XmlEntries();
-
         xmlEntries.setXmlEntries(arrayList);
         JaxbParser jaxbParser = new JaxbParser();
-
         jaxbParser.saveObject(new File(fileName), xmlEntries);
     }
 
-    private static void transformXlsToXSLT(String xmlFile, String xsltFile, String xlsSource) throws TransformerException {
+    private static void transformXlsByXSLT(String xmlFile, String xsltFile, String xlsSource) throws TransformerException {
         XsltTransformer xsltTransformer = new XsltTransformer();
         xsltTransformer.transformXmlToXlst(xmlFile, xsltFile, xlsSource);
-
     }
 
     private static ArrayList<XmlEntry> readXmlEntriesFromXml(String filename) throws Exception {
@@ -75,9 +74,9 @@ public class Main {
         result = xmlEntries.getXmlEntries();
         return result;
     }
+
     private static void incomingParameters(String[] args) {
         try {
-
             if (args.length == 3) {
                 firstFileName = args[0];
                 secondFileName = args[1];
@@ -85,18 +84,21 @@ public class Main {
             } else if (args.length == 2) {
                 firstFileName = args[0];
                 secondFileName = args[1];
+                if (firstFileName.equals(secondFileName)){
+                    secondFileName = secondFileName + "_";
+                }
             } else if (args.length == 1) {
                 bigN = Integer.valueOf(args[0]);
             } else if (args.length < 1) {
                 //NOP
             } else {
-                log.error("Error parameters:" + args.toString());
+                String error = "Error parameters:" + Arrays.toString(args);
+                throw new NumberFormatException(error);
             }
         } catch (NumberFormatException n) {
             log.error(n);
             System.exit(0);
         }
-
     }
 
     private static int getSumXmlEntryFromArrayList(ArrayList<XmlEntry> xmlEntryArrayList) {

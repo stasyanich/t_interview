@@ -1,6 +1,8 @@
 package com.stasyan.interview.xmltoxml.util;
 
 import com.stasyan.interview.xmltoxml.model.XmlEntry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,6 +11,7 @@ public class DBUtilStatic {
     private static final String JDBC_DRIVER = "org.sqlite.JDBC";
     private static final String CONN_STR = "jdbc:sqlite:";
     private static Connection connection;
+    private static final Logger log = LogManager.getLogger();
 
     static {
         try {
@@ -16,13 +19,14 @@ public class DBUtilStatic {
             connection = getConnection();
             clearDB();
         }catch (ClassNotFoundException e){
-            System.err.println("Cannot to load jdbc driver");
+           log.error("Cannot to load jdbc driver");
         }catch (XmlToXmlException e) {
-            System.err.println(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 
     private static Connection getConnection() throws XmlToXmlException{
+        log.info("Try to get connection");
         try {
             return DriverManager.getConnection(CONN_STR+"xmltoxml.db");
         }catch (SQLException e){
@@ -31,7 +35,7 @@ public class DBUtilStatic {
     }
 
     private static void querySqlDB(String query) throws XmlToXmlException {
-
+        log.info("Try to execute query: " + query );
         try(Statement statement = connection.createStatement()) {
             statement.execute(query);
 
@@ -44,7 +48,7 @@ public class DBUtilStatic {
     }
 
     public static void addRecord(int amount) throws XmlToXmlException{
-
+        log.info("Try to insert " + amount + " records to TEST");
         String sqlQuery = "INSERT INTO TEST (FIELD) VALUES (?)";
         try(PreparedStatement statement = connection.prepareStatement(sqlQuery)){
             connection.setAutoCommit(false);
@@ -64,6 +68,7 @@ public class DBUtilStatic {
     }
 
     public static ArrayList<XmlEntry> readRecordsFromDB() throws XmlToXmlException{
+        log.info("Try to read records from TEST"  );
         ArrayList<XmlEntry> result ;
         String sqlQuery = "SELECT * FROM TEST";
         try(Statement statement = connection.createStatement()) {
@@ -77,6 +82,7 @@ public class DBUtilStatic {
     }
 
     private static ArrayList<XmlEntry> parseResultSetXmlBeans(ResultSet rs) throws SQLException {
+        log.info("Try to parse objects from ResultSet " );
         ArrayList<XmlEntry> result = new ArrayList<>();
         while (rs.next()){
             XmlEntry xmlEntry = new XmlEntry();
