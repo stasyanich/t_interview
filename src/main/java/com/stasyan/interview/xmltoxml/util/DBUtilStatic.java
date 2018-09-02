@@ -27,7 +27,7 @@ public class DBUtilStatic {
     }
 
     private static Connection getConnection() throws XmlToXmlException {
-        log.info("Try to get connection to data base");
+        log.info("Try to get connection to data base!");
         try (Connection connection = DriverManager.getConnection(CONN_STR + DB_NAME)) {
             return connection;
         } catch (SQLException e) {
